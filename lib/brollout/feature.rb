@@ -1,24 +1,33 @@
 class Brollout::Feature
 
-  def initialize(name)
+  def initialize(name, strategy=:on_off, adapter=Brollout.adapter)
     @name = name
-    @active = false
+    @strategy = strategy
+    @adapter = adapter
   end
 
   def name
     @name.to_s
   end
 
+  def strategy
+    @strategy
+  end
+
+  def adapter
+    @adapter
+  end
+
   def activate!
-    @active = true
+    @adapter.activate!(@strategy)
   end
 
   def deactivate!
-    @active = false
+    @adapter.deactivate!(@strategy)
   end
 
   def active?
-    @active
+    @adapter.active?(@strategy)
   end
 
 end

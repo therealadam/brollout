@@ -6,27 +6,30 @@ a site in degraded mode, you can turn a feature on for a percentage of your
 users, or you can ramp a feature up by percentage of requests when you're
 testing new infrastructure.
 
-## Right, show me that code
+## Bro! Show me that code
 
     # Store feature flags in Redis
-    Brollout.storage = Memcache.new
+    Brollout.storage = Brollout::Memcache.new
 
-    # In an initializer or config file
-    $friend_finder = Feature.new(:friend_finder)
+    $friend_finder = Brollout.feature(:friend_finder, :on_off)
+    $new_cache = Brollout.feature(:new_cache, :per_request_percentage)
 
-    # In a console after you deploy new code
-    $friend_finder.activate!
+    Brollout.register_strategy(:custom) do |user|
+      user.admin? || per_user_percentage(user)
+    end
 
-    # Somewhere in your app
-    if $friend_finder.active?
+    $better_sharing = Brollout.feature(:better_sharing, :custom)
+
+    $simple = Brollout.feature(:simple, :on_off, Brollout::InMemory.new)
+    $simple.activate!
+
+    if $simple.active?
       # Do friend finder things
     else
       # Do something else
     end
 
-    $new_cache = PerRequestFeature.new(:new_cache)
-
-    $new_cache.activate!(0.5)
+    $new_cache.activate_for(0.5)
 
     if $new_cache.active?
       # Use the new cache
@@ -34,41 +37,40 @@ testing new infrastructure.
       # Use the old cache
     end
 
-    $sekrit_new_feature = PerUserFeature.new(:sekrit_new_feature)
+    $better_sharing.activate_for(user.id)
 
-    $sekrit_new_feature.activate_for(user.id)
-
-    if $sekrit_new_feature.active?(user.id)
+    if $better_sharing.active?(user.id)
       # Show the new feature
     else
       # Show the old feature
     end
 
-## Use our toggles or toggle your own toggle
+## Bro, how do I toggle and can I toggle my own toggle?
 
 Brollout ships with the following toggle strategies:
 
 - On/off
 - Random percentage
-- Per-user
-- ID modulo
+- Per object ID
+- Object ID modulo
 
 In addition, you can implement your own toggle strategies by using the
-`StrategyFeature`:
+`register_strategy`:
 
-    class MyAppFeature < StrategyFeature
-
-      def strategies
-        [:admin?, :on_off?]
-      end
-
-      def admin?(user)
-        user.admin?
-      end
-
+    Brollout.register_strategy(:custom) do |user|
+      user.admin? || per_user_percentage(user)
     end
 
 Pretty snazzy, no?
+
+## Bro, you can stick it wherever you stick things
+
+Brollout ships with adapters to store feature flags in per-process memory,
+memcached, redis, or wherever it is you like to store things. Adapters
+implement the following contract:
+
+    adapter.on_off?(feature)
+    adapter.per_object_id(feature)
 
 ## License
 
