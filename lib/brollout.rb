@@ -2,6 +2,7 @@ require 'active_support/core_ext/module'
 
 module Brollout
 
+  autoload :Adapter, 'brollout/adapter'
   autoload :Feature, 'brollout/feature'
 
   mattr_accessor :adapter
