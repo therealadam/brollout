@@ -2,16 +2,12 @@ class Brollout::Feature
 
   def initialize(name, strategy=:on_off, adapter=Brollout.adapter)
     @name = name
-    @strategy = strategy
     @adapter = adapter
+    adapter.strategy = strategy
   end
 
   def name
     @name.to_s
-  end
-
-  def strategy
-    @strategy
   end
 
   def adapter
@@ -19,15 +15,15 @@ class Brollout::Feature
   end
 
   def activate!
-    @adapter.activate!(@strategy)
+    @adapter.activate!
   end
 
   def deactivate!
-    @adapter.deactivate!(@strategy)
+    @adapter.deactivate!
   end
 
   def active?
-    @adapter.active?(@strategy)
+    @adapter.active?
   end
 
 end

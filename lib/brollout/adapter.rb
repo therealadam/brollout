@@ -2,13 +2,17 @@ require 'set'
 
 class Brollout::Adapter
 
+  attr_writer :strategy
+
   def initialize
+    @strategy = nil
+
     @active = false
     @active_users = Set.new
     @percentage = 0
   end
 
-  def activate!(strategy, arg={})
+  def activate!(arg={})
     case strategy
     when :percentage
       @percentage = arg
@@ -24,7 +28,7 @@ class Brollout::Adapter
   end
   alias :activate_for :activate!
 
-  def deactivate!(strategy, arg={})
+  def deactivate!(arg={})
     case strategy
     when :per_user
       @active_users.delete(arg)
@@ -35,7 +39,7 @@ class Brollout::Adapter
     end
   end
 
-  def active?(strategy, arg={})
+  def active?(arg={})
     case strategy
     when :percentage
       active_for_percentage?
@@ -65,6 +69,11 @@ class Brollout::Adapter
 
   def active_for_user_modulo?(user)
     percentage > user.id
+  end
+
+  def strategy
+    raise 'You must specify a strategy before using a feature.' if @strategy.nil?
+    @strategy
   end
 
 end

@@ -1,20 +1,21 @@
 require 'spec_helper'
 
 class TestAdapter
+  attr_accessor :strategy
 
   def initialize
     @active = false
   end
 
-  def activate!(strategy)
+  def activate!
     @active = true
   end
 
-  def deactivate!(strategy)
+  def deactivate!
     @active = false
   end
 
-  def active?(strategy)
+  def active?
     @active
   end
 
@@ -27,10 +28,6 @@ describe Brollout::Feature do
 
   it 'has a name' do
     subject.name.should == 'nifty'
-  end
-
-  it 'has a strategy' do
-    subject.strategy.should eq(:on_off)
   end
 
   it 'activates a feature' do
