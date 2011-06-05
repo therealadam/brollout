@@ -6,10 +6,12 @@ a site in degraded mode, you can turn a feature on for a percentage of your
 users, or you can ramp a feature up by percentage of requests when you're
 testing new infrastructure.
 
+**This is just a sketch. Don't rage me, bro.**
+
 ## Bro! Show me that code
 
     # Store feature flags in Redis
-    Brollout.storage = Brollout::Memcache.new
+    Brollout.adapter = Brollout::Adapter.new
 
     $friend_finder = Brollout.feature(:friend_finder, :on_off)
     $new_cache = Brollout.feature(:new_cache, :per_request_percentage)
@@ -37,7 +39,7 @@ testing new infrastructure.
       # Use the old cache
     end
 
-    $better_sharing.activate_for(user.id)
+    $better_sharing.activate_for(user)
 
     if $better_sharing.active?(user.id)
       # Show the new feature
@@ -72,6 +74,7 @@ implement the following contract:
     adapter.on_off?(feature)
     adapter.per_object_id(feature)
 
-## License
+## Bro, can I license that thing?
 
-Copyright 2011 Adam Keys. Brollout is MIT licensed.
+Yep! Brollout is copyright 2011 Adam Keys. Brollout is MIT licensed, so go
+crazy, bro.
