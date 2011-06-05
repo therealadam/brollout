@@ -2,6 +2,13 @@ require 'spec_helper'
 
 describe Brollout::Adapter do
 
+  it 'raises an exception when an unknown strategy is used' do
+    strategy = :wakka_wakka
+    expect { subject.active?(strategy) }.to raise_exception(ArgumentError)
+    expect { subject.activate!(strategy) }.to raise_exception(ArgumentError)
+    expect { subject.deactivate!(strategy) }.to raise_exception(ArgumentError)
+  end
+
   context 'implements the on/off strategy' do
     let(:strategy) { :on_off }
 

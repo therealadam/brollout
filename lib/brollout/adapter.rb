@@ -16,8 +16,10 @@ class Brollout::Adapter
       @active_users << arg
     when :user_modulo
       @percentage = arg
-    else
+    when :on_off
       @active = true
+    else
+      raise ArgumentError.new("Unknown strategy '#{strategy}'")
     end
   end
   alias :activate_for :activate!
@@ -26,8 +28,10 @@ class Brollout::Adapter
     case strategy
     when :per_user
       @active_users.delete(arg)
-    else
+    when :on_off
       @active = false
+    else
+      raise ArgumentError.new("Unknown strategy '#{strategy}'")
     end
   end
 
@@ -39,8 +43,10 @@ class Brollout::Adapter
       active_for_user?(arg)
     when :user_modulo
       active_for_user_modulo?(arg)
-    else
+    when :on_off
       @active
+    else
+      raise ArgumentError.new("Unknown strategy '#{strategy}'")
     end
   end
   alias :active_for? :active?
